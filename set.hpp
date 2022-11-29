@@ -8,9 +8,21 @@ class Set {
     /// the different column(s) of data so to speak
     static std::vector<Datum> data;
     bool* isUsing;
-    int numCols;
+    int size;
     public:
+
+    // constructor
+
     Set(int size);
+
+    // TODO: Rule of Three
+
+    ~Set();
+    Set(const Set& s);
+    Set& operator=(const Set& rhs);
+
+    // functions
+
     static void setData(std::vector<Datum>& data);
     Datum nearestNeighbor(const Datum& d);
 };

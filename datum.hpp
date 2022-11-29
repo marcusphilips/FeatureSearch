@@ -8,13 +8,14 @@ class Datum {
     int type;
     /// @brief The values stored of this paraticular datum object. The array thing is getting 
     /// annoyed so I will just use dynamically allocated arrays even though they are all
-    /// the same size
+    /// the same size. 
     double* vals;
+    int size;
     public:
 
     // constructors
 
-    Datum(int type, double* vals);
+    Datum(int type, double* vals, int size);
 
     // Rule of 3
 
@@ -26,6 +27,7 @@ class Datum {
 
     int getType() const;
     double getNthVal(const int n) const;
+    bool operator==(const Datum& rhs) const;
 };
 
 #endif DATUM_HPP

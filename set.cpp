@@ -2,7 +2,7 @@
 
 std::vector<Datum> Set::data = std::vector<Datum>();
 
-Set::Set(int size) : numCols(size)
+Set::Set(int size) : size(size)
 {
     isUsing = new bool[size];
     for (int i = 0; i < size; i++)
