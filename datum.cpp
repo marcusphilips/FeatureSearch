@@ -16,10 +16,12 @@ Datum::~Datum(){
 Datum::Datum(const Datum& d){
     this->type = d.type;
     this->size = size;
-    vals = new double[d.size];
-    for (int i = 0; i < size; i++){
-        vals[i] = d.vals[i];
-    }
+    this->vals = vals;
+    // Actually want to do a shallow copy
+    // vals = new double[d.size];
+    // for (int i = 0; i < size; i++){
+    //     vals[i] = d.vals[i];
+    // }
 }
 
 /// @brief Constructs and returns the new Datum object using another Datum object after the
@@ -28,11 +30,12 @@ Datum::Datum(const Datum& d){
 /// @return the newly created Datum object
 Datum& Datum::operator=(const Datum& rhs){
     type = rhs.type;
-    this->size = size;
-    vals = new double[rhs.size];
-    for (int i = 0; i < size; i++){
-        vals[i] = rhs.vals[i];
-    }
+    this->size = rhs.size;
+    this->vals = rhs.vals;
+    // vals = new double[rhs.size];
+    // for (int i = 0; i < size; i++){
+    //     vals[i] = rhs.vals[i];
+    // }
     return *this;
 }
 
