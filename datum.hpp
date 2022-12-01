@@ -30,4 +30,4 @@ class Datum {
     bool operator==(const Datum& rhs) const;
 };
 
-#endif DATUM_HPP
+#endif 

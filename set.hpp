@@ -28,4 +28,4 @@ class Set {
     Datum& nearestNeighbor(const Datum& d);
 };
 
-#endif SET_HPP
+#endif 
