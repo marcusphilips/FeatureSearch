@@ -1,6 +1,7 @@
 #ifndef SET_HPP
 #define SET_HPP
 #include <vector>
+#include <cmath>
 #include "datum.hpp"
 
 class Set {
@@ -24,7 +25,7 @@ class Set {
     // functions
 
     static void setData(std::vector<Datum>& data);
-    Datum nearestNeighbor(const Datum& d);
+    Datum& nearestNeighbor(const Datum& d);
 };
 
 #endif SET_HPP
