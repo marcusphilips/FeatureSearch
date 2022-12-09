@@ -50,10 +50,11 @@ int Set::nearestNeighbor(const Datum& d) const {
             acc.back() += dif*dif;
         }
     }
-    for (int i = 0; acc.size(); i++){
+    for (int i = 0; i < acc.size(); i++){
         acc[i] = std::sqrt(acc[i]);
     }
     double smallestValue = acc[0]; // largest
+    // should be read as "index of the smallest"
     int smallestIndex = 0;
     for (int i = 0; i < acc.size(); i++){
        if (acc[i] < smallestValue){
@@ -65,19 +66,21 @@ int Set::nearestNeighbor(const Datum& d) const {
        }
     }
     return data[smallestIndex].getType();
-   
 }
 
 double Set::kFoldAccurracy() const {
-    const int k = 5;
+    const int k = 2;
     const int n = data.size();
     int total = 0;
     int correct = 0;
     for (int partition = 0; partition < k; partition++){
         // k select
+        std::cout << "Using following lines for k partition\n"; 
         for (int i = 0; i < n; i++){
-            if (i > (double)n*partition/k && i < (double)n*(partition + 1)/k)
+            if (i >= (int)std::round((double)n*partition/k) && i < (int)std::round((double)n*(partition + 1)/k)){
                 data[i].doUse();
+                std::cout<< i << std::endl;
+            }
             else
                 data[i].doNotUse();
         }
@@ -93,7 +96,27 @@ double Set::kFoldAccurracy() const {
 }
 
 Set::~Set(){
-    delete[] isUsing;
+    // delete[] isUsing;
+}
+
+Set::Set(const Set& s){
+    this->size = s.size;
+    bool* n = new bool[s.size];
+    for (int i = 0; i < s.size; i++){
+        n[i] = s.isUsing[i];
+    }
+    this->isUsing = n;
+}
+
+Set& Set::operator=(const Set& rhs){
+    if (this == &rhs){
+        return *this;
+    }
+    isUsing = new bool[rhs.size];
+    for (int i = 0; i < rhs.size; i++){
+        isUsing[i] = rhs.isUsing[i];
+    }
+    return *this; 
 }
 
 void Set::useColumn(int index){

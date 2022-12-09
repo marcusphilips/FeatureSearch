@@ -2,6 +2,7 @@
 #define SET_HPP
 #include <vector>
 #include <cmath>
+#include <iostream>
 #include "datum.hpp"
 
 class Set {
