@@ -28,9 +28,6 @@ class Datum {
 
     int getType() const;
     int getSize() const;
-    void doNotUse();
-    void doUse();
-    bool isUsed() const;
     double getNthVal(const int n) const;
     bool operator==(const Datum& rhs) const;
 };

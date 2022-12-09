@@ -67,17 +67,6 @@ bool Datum::operator==(const Datum& rhs) const{
     return vals == rhs.vals;
 }
 
-void Datum::doNotUse() {
-    this->use = false;
-}
-void Datum::doUse() {
-    this->use =true;
-}
-
-bool Datum::isUsed() const{
-    return use;
-}
-
 int Datum::getSize() const{
     return size;
 }

@@ -52,7 +52,7 @@ int main(int argc, char **argv)
         {
             Set s = bestSoFar;
             s.useColumn(*it);
-            double accuracy = s.kFoldAccurracy();
+            double accuracy = s.leaveOneOutAccurracy();
             if (accuracy > bestRate){
                 bestRate = accuracy;
                 bestRateNumber = it;

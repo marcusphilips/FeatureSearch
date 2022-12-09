@@ -2,6 +2,7 @@
 #define SET_HPP
 #include <vector>
 #include <cmath>
+#include <iostream>
 #include "datum.hpp"
 
 class Set {
@@ -30,7 +31,7 @@ class Set {
     static void setData(std::vector<Datum>& data);
     static int getNumColumns();
     int nearestNeighbor(const Datum& d) const;
-    double kFoldAccurracy() const;
+    double leaveOneOutAccurracy() const;
 };
 
 #endif 
