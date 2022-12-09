@@ -27,6 +27,7 @@ class Datum {
     // methods or functions. I know one's for c++ and the other is for python
 
     int getType() const;
+    int getSize() const;
     void doNotUse();
     void doUse();
     bool isUsed() const;

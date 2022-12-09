@@ -77,3 +77,7 @@ void Datum::doUse() {
 bool Datum::isUsed() const{
     return use;
 }
+
+int Datum::getSize() const{
+    return size;
+}

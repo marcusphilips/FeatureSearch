@@ -24,9 +24,18 @@ int main(int argc, char** argv){
         return 1;
     }
     cout << "Successfully Read File" << endl;
-    Set s;
-    s.useColumn(0);
-    cout << s.kFoldAccurracy() << endl;
+    vector<Set> v;
+    vector<double> d;
+    const int n = Set::getNumColumns();
+    v.reserve(n);
+    for (int i = 0; i < n; i++){
+        Set s;
+        s.useColumn(i);
+        double accuracy = s.kFoldAccurracy();
+        v.push_back(s);
+        d.push_back(accuracy);
+        cout << "Using Column " << i << " gives an accuracy of " << accuracy << endl;
+    }
     return 0;
 }
 

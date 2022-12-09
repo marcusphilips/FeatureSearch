@@ -2,7 +2,7 @@
 
 std::vector<Datum> Set::data = std::vector<Datum>();
 
-Set::Set() : size(data.size())
+Set::Set() : size(data[0].getSize())
 {
     isUsing = new bool[size];
     for (int i = 0; i < size; i++)
@@ -12,6 +12,10 @@ Set::Set() : size(data.size())
 /// @brief Set's the static data vector to the parameter
 /// @param input a vector of Datums
 void Set::setData(std::vector<Datum> &input) { data = input; }
+
+int Set::getNumColumns() {
+    return data[0].getSize();
+}
 
 /// @brief An almost naive implementation of nearest neighbor. Near zero optimization 
 /// @param d Another datum to compare
@@ -69,17 +73,17 @@ int Set::nearestNeighbor(const Datum& d) const {
 }
 
 double Set::kFoldAccurracy() const {
-    const int k = 2;
+    const int k = 3;
     const int n = data.size();
     int total = 0;
     int correct = 0;
     for (int partition = 0; partition < k; partition++){
         // k select
-        std::cout << "Using following lines for k partition\n"; 
+       // std::cout << "Using following lines for k partition\n"; 
         for (int i = 0; i < n; i++){
             if (i >= (int)std::round((double)n*partition/k) && i < (int)std::round((double)n*(partition + 1)/k)){
                 data[i].doUse();
-                std::cout<< i << std::endl;
+               // std::cout<< i << std::endl;
             }
             else
                 data[i].doNotUse();
@@ -96,6 +100,7 @@ double Set::kFoldAccurracy() const {
 }
 
 Set::~Set(){
+    // Sorry but I am paranoid about Segmentation faults
     // delete[] isUsing;
 }
 
