@@ -1,10 +1,14 @@
 #include "featureSet.hpp"
 
+using namespace std;
+
 FeatureSet::FeatureSet(){
     accuracy = 0.0;
+    lastAdded = -1;
 }
 
-void FeatureSet::addNewColumn(int i){
+void FeatureSet::addNewColumn(const int i){
+    lastAdded = i;
     columns.push_back(i);
     std::sort(columns.begin(), columns.end());
 }
@@ -20,11 +24,17 @@ std::vector<int> FeatureSet::getColumns() const{
 std::string FeatureSet::toString() const{
     std::string acc = "{";
     for (int i = 0; i < columns.size(); i++){
-        acc += columns[i];
+        // to account that the first column is in code is 0
+        // but outside speak we count from 1
+        acc += to_string(columns[i] + 1);
         if (i + 1 != columns.size()){
             acc += ", ";
         }
     }
     acc += "}";
     return acc;
+}
+
+int FeatureSet::getLastAdded() const{
+    return lastAdded;
 }

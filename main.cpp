@@ -28,46 +28,49 @@ int main(int argc, char **argv)
         return 1;
     }
     cout << "Successfully Read File" << endl;
-    vector<Set> v;
     vector<FeatureSet> bestFeatures;
-    vector<FeatureSet> fs;
     list<int> columnsLeft;
     const int n = Set::getNumColumns();
     for (int i = 0; i < n; i++)
     {
         columnsLeft.push_back(i);
     }
-    v.reserve(n);
-    fs.reserve(n);
     FeatureSet defaultRate;
     defaultRate.accuracy = 0.5;
     bestFeatures.push_back(defaultRate);
     while (!columnsLeft.empty())
     {
-        fs.clear();
-        v.clear();
         Set bestSoFar;
-        vector<int> bestColumns = fs.back().getColumns();
+        cout << bestFeatures.back().accuracy << " " << bestFeatures.back().toString() << endl;
+        vector<int> bestColumns = bestFeatures.back().getColumns();
         for (int j = 0; j < bestColumns.size(); j++){
             bestSoFar.useColumn(bestColumns.at(j));
         }
+        double bestRate = -1.0;
+        list<int>::iterator bestRateNumber = columnsLeft.begin();
         for (list<int>::iterator it = columnsLeft.begin(); it != columnsLeft.end(); it++)
         {
             Set s = bestSoFar;
             s.useColumn(*it);
             double accuracy = s.kFoldAccurracy();
-            v.push_back(s);
-            FeatureSet f;
-            f.addNewColumn(i);
-            f.accuracy = accuracy;
-            fs.push_back(f);
-            cout << "Using Column " << i << " gives an accuracy of " << accuracy << endl;
+            if (accuracy > bestRate){
+                bestRate = accuracy;
+                bestRateNumber = it;
+            }
         }
+        FeatureSet f = bestFeatures.back();
+        f.addNewColumn(*bestRateNumber);
+        f.accuracy = bestRate;
+        bestFeatures.push_back(f);
+        columnsLeft.erase(bestRateNumber);
     }
 
     return 0;
 }
 
+/// @brief Reads in the file. Quite tedious. I am 99% sure there is actually a faster way
+/// @param filepath the filepath to the file
+/// @return a bool indicating whether the file was successfully read
 bool readfile(string filepath)
 {
     vector<Datum> data;
@@ -78,7 +81,6 @@ bool readfile(string filepath)
         string line;
         while (getline(input, line))
         {
-            cout << line << endl;
             if (line.size() == 0)
             {
                 // if it somehow reads the ending new line as an entire line of size 0
@@ -88,29 +90,21 @@ bool readfile(string filepath)
             // now I have to splice line
             unsigned i;
             vector<string> rawValues;
-            while (true)
+            while (!line.empty())
             {
                 i = line.find(" ");
-                // cout << "i: " << i << endl;
                 if (i == (unsigned)-1)
                     break;
-                if (i == 0)
+                if (i == 0) 
                 {
+                    // the space character is the next character so just move over
                     line = line.substr(1);
                     continue;
                 }
                 rawValues.push_back(line.substr(0, i));
-                // cout << rawValues.back() << endl;
                 line = line.substr(i + 1); // skips the space
             }
-            // cout << "remaining line <" << line << ">" << endl;
             rawValues.push_back(line + '\0');
-            cout << "Last value: " << rawValues.back() << endl;
-            // convert rawValues to valid Datum Object
-            // first value of rawValues is the class which I will convert to an integer
-            // for (int i = 0; i < rawValues.size(); i++){
-            //     cout << "<" << rawValues.at(i) << ">" << endl;
-            // }
             int classType = stoi(rawValues.at(0).substr(0, 1));
             double* nums = new double[rawValues.size() - 1];
             for (int i = 1; i < rawValues.size(); i++)
@@ -119,12 +113,9 @@ bool readfile(string filepath)
                 istringstream os(s);
                 double d;
                 os >> d;
-                // cout << s << " vs " << d << endl;
                 nums[i - 1] = d;
             }
-            int debug;
             data.push_back(Datum(classType, nums, rawValues.size() - 1));
-            // cout << "Got Data: " << data.back().getType() << endl;
         }
         input.close();
         Set::setData(data);

@@ -73,7 +73,7 @@ int Set::nearestNeighbor(const Datum& d) const {
 }
 
 double Set::kFoldAccurracy() const {
-    const int k = 3;
+    const int k = 10;
     const int n = data.size();
     int total = 0;
     int correct = 0;
