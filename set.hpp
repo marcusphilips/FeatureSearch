@@ -26,6 +26,7 @@ class Set {
 
     static void setData(std::vector<Datum>& data);
     Datum& nearestNeighbor(const Datum& d);
+    double kFoldAccurracy() const;
 };
 
 #endif 

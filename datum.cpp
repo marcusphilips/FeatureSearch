@@ -4,7 +4,7 @@
 /// @param type e.g. Class is of type integer
 /// @param vals the floating point values associated with this data point stored in a dynamically allocated array
 /// @param size how big is the array passed in vals
-Datum::Datum(int type, double* vals, int size) : type(type), vals(vals), size(size) {}
+Datum::Datum(int type, double* vals, int size) : type(type), vals(vals), size(size), use(false) {}
 
 /// @brief Deallocates dynamically allocated data to not create memory leaks
 Datum::~Datum(){
@@ -63,4 +63,15 @@ bool Datum::operator==(const Datum& rhs) const{
     // allocated, array are equal since each new instantiation creates a 
     // unique address
     return vals == rhs.vals;
+}
+
+void Datum::doNotUse() {
+    this->use = false;
+}
+void Datum::doUse() {
+    this->use =true;
+}
+
+bool Datum::isUsed() const{
+    return use;
 }

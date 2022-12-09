@@ -47,3 +47,11 @@ Datum& Set::nearestNeighbor(const Datum& d){
 
 }
 
+double Set::kFoldAccurracy() const {
+    int k = 2;
+    for (int partion = 0; partion < k; partion++){
+        for (Datum& d: data){
+            d.isUsing = false;
+        }
+    }
+}

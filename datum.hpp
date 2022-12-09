@@ -11,8 +11,9 @@ class Datum {
     /// the same size. 
     double* vals;
     int size;
+    bool use;
     public:
-
+   
     // constructors
 
     Datum(int type, double* vals, int size);
@@ -26,6 +27,9 @@ class Datum {
     // methods or functions. I know one's for c++ and the other is for python
 
     int getType() const;
+    void doNotUse();
+    void doUse();
+    bool isUsed() const;
     double getNthVal(const int n) const;
     bool operator==(const Datum& rhs) const;
 };
