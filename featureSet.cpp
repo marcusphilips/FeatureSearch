@@ -10,7 +10,6 @@ FeatureSet::FeatureSet(){
 void FeatureSet::addNewColumn(const int i){
     lastAdded = i;
     columns.push_back(i);
-    std::sort(columns.begin(), columns.end());
 }
 
 int FeatureSet::getSize()const{

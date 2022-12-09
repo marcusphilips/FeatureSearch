@@ -1,7 +1,6 @@
 #ifndef FEATURE_SET_HPP
 #define FEATURE_SET_HPP
 #include <vector>
-#include <algorithm>
 #include <string>
 
 class FeatureSet {
