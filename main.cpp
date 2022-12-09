@@ -27,44 +27,73 @@ int main(int argc, char **argv)
         cout << "Error: Could not read file <" << argv[1] << "> for whatever reason" << endl;
         return 1;
     }
-    cout << "Successfully Read File" << endl;
+
+    /// @brief the bestFeatures stores the "history" of the tree traversal
     vector<FeatureSet> bestFeatures;
+
+    /// @brief columnsLeft stores all the indices of the columns of data. Each level we traverse
+    /// the tree, columnsLeft goes down by 1
     list<int> columnsLeft;
-    const int n = Set::getNumColumns();
-    for (int i = 0; i < n; i++)
+
+    // Populating ColumnsLeft with the column indices 
+    for (int i = 0; i < Set::getNumColumns(); i++)
     {
         columnsLeft.push_back(i);
     }
+
     FeatureSet defaultRate;
+
+    // hardcoded defaultRate to be equivalent to guessing
     defaultRate.accuracy = 0.5;
+
     bestFeatures.push_back(defaultRate);
+
+    // traverse the whole tree
     while (!columnsLeft.empty())
     {
+        /// @brief bestSoFar represents the set whose columns are selected from the latest element in bestFeatures.
+        /// If the latest element is the default Rate, then the bestSoFar selects no columns
         Set bestSoFar;
+
+        // outputting data
         cout << bestFeatures.back().accuracy << " " << bestFeatures.back().toString() << endl;
+
+        // Populating bestSoFar with the columns found already
         vector<int> bestColumns = bestFeatures.back().getColumns();
-        for (int j = 0; j < bestColumns.size(); j++){
+        for (unsigned j = 0; j < bestColumns.size(); j++){
             bestSoFar.useColumn(bestColumns.at(j));
         }
+
+        // find the best accuracy
         double bestRate = -1.0;
         list<int>::iterator bestRateNumber = columnsLeft.begin();
+        
         for (list<int>::iterator it = columnsLeft.begin(); it != columnsLeft.end(); it++)
         {
             Set s = bestSoFar;
+
+            // Add one new column to bestSoFar
             s.useColumn(*it);
+
+            // Calculate accuracy with that one new column
             double accuracy = s.leaveOneOutAccurracy();
+
+            // capture the best acccuracy
             if (accuracy > bestRate){
                 bestRate = accuracy;
                 bestRateNumber = it;
             }
         }
+
+        // Create new feature set from what we learned and add to bestFeatures
         FeatureSet f = bestFeatures.back();
         f.addNewColumn(*bestRateNumber);
         f.accuracy = bestRate;
         bestFeatures.push_back(f);
+        
+        // remove the column that we added from our to-do list basically. Nice O(1) operation
         columnsLeft.erase(bestRateNumber);
     }
-
     return 0;
 }
 
@@ -107,7 +136,7 @@ bool readfile(string filepath)
             rawValues.push_back(line + '\0');
             int classType = stoi(rawValues.at(0).substr(0, 1));
             double* nums = new double[rawValues.size() - 1];
-            for (int i = 1; i < rawValues.size(); i++)
+            for (unsigned i = 1; i < rawValues.size(); i++)
             {
                 string s = rawValues.at(i);
                 istringstream os(s);

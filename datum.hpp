@@ -4,6 +4,7 @@
 /// @brief Data object that holds the class and the associated values with it
 class Datum {
     private:
+    
     /// @brief Class was reserved
     int type;
     /// @brief The values stored of this paraticular datum object. The array thing is getting 
@@ -11,7 +12,7 @@ class Datum {
     /// the same size. 
     double* vals;
     int size;
-    bool use;
+
     public:
    
     // constructors

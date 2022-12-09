@@ -2,6 +2,8 @@
 
 std::vector<Datum> Set::data = std::vector<Datum>();
 
+/// @brief Set is actually quite object. All it really stores which columns are in play. However, that means you must
+/// populate data using setData.
 Set::Set() : size(data[0].getSize())
 {
     isUsing = new bool[size];
@@ -13,6 +15,8 @@ Set::Set() : size(data[0].getSize())
 /// @param input a vector of Datums
 void Set::setData(std::vector<Datum> &input) { data = input; }
 
+/// @brief Get the width of our dataset. Not asking how many elements are in data
+/// @return number of columns as an integer
 int Set::getNumColumns()
 {
     return data[0].getSize();
@@ -26,7 +30,7 @@ int Set::nearestNeighbor(const Datum &d) const
     std::vector<double> acc;
     // just reserve a bunch of memory to speed up
     acc.reserve(data.size());
-    for (int i = 0; i < data.size(); i++)
+    for (unsigned i = 0; i < data.size(); i++)
     {
         if (data[i] == d)
         {
@@ -35,11 +39,6 @@ int Set::nearestNeighbor(const Datum &d) const
             acc.push_back(1000000.0);
             continue;
         }
-        // if (!data[i].isUsed()){
-        //     // do not use datums that are hidden in k-cross
-        //     acc.push_back(1000000.0);
-        //     continue;
-        // }
         acc.push_back(0.0);
         for (int col = 0; col < size; col++)
         {
@@ -49,19 +48,14 @@ int Set::nearestNeighbor(const Datum &d) const
             acc.back() += dif * dif;
         }
     }
-    for (int i = 0; i < acc.size(); i++)
+    for (unsigned i = 0; i < acc.size(); i++)
     {
         acc[i] = std::sqrt(acc[i]);
     }
-    // std::cout << "Distances: ";
-    // for (int i = 0; i < acc.size(); i++){
-    //     std::cout << acc[i] << " " ;
-    // }
-    // std::cout << std::endl;
     double smallestValue = acc[0]; // largest
     // should be read as "index of the smallest"
-    int smallestIndex = 0;
-    for (int i = 0; i < acc.size(); i++)
+    int smallestIndex = -1;
+    for (unsigned i = 0; i < acc.size(); i++)
     {
         if (acc[i] < smallestValue)
         {
@@ -73,13 +67,12 @@ int Set::nearestNeighbor(const Datum &d) const
             }
         }
     }
-    // std::cout << "For " << d.getType() << " with values "
-    //     << d.getNthVal(0) << ", " << d.getNthVal(1) << std::endl;
-    // std::cout << "The nearest neighbor is " << data[smallestIndex].getType() << std::endl;
-    // exit(0);
     return data[smallestIndex].getType();
 }
 
+/// @brief Returns the accuracy of taking one Datum seeing its nearest neighbor and see if the types match.
+/// Repeat counting the ones the match overall all data elements
+/// @return accuracy in the form of a double [0, 1]
 double Set::leaveOneOutAccurracy() const
 {
     const int n = data.size();
@@ -94,14 +87,12 @@ double Set::leaveOneOutAccurracy() const
             correct++;
         }
     }
-    //}
     return (double)correct / total;
 }
 
 Set::~Set()
 {
-    // Sorry but I am paranoid about Segmentation faults
-    // delete[] isUsing;
+    delete[] isUsing;
 }
 
 Set::Set(const Set &s)

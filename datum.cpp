@@ -4,7 +4,7 @@
 /// @param type e.g. Class is of type integer
 /// @param vals the floating point values associated with this data point stored in a dynamically allocated array
 /// @param size how big is the array passed in vals
-Datum::Datum(int type, double* vals, int size) : type(type), size(size), use(false) {
+Datum::Datum(int type, double* vals, int size) : type(type), size(size) {
     this->vals = vals;
 }
 
