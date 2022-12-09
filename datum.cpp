@@ -4,19 +4,21 @@
 /// @param type e.g. Class is of type integer
 /// @param vals the floating point values associated with this data point stored in a dynamically allocated array
 /// @param size how big is the array passed in vals
-Datum::Datum(int type, double* vals, int size) : type(type), vals(vals), size(size), use(false) {}
+Datum::Datum(int type, double* vals, int size) : type(type), size(size), use(false) {
+    this->vals = vals;
+}
 
 /// @brief Deallocates dynamically allocated data to not create memory leaks
 Datum::~Datum(){
-    delete[] vals;
+    //delete[] vals;
 }
 
 /// @brief Constructs new Datum object using another Datum object as a parameter
 /// @param d another Datum object
 Datum::Datum(const Datum& d){
     this->type = d.type;
-    this->size = size;
-    this->vals = vals;
+    this->size = d.size;
+    this->vals = d.vals;
     // Actually want to do a shallow copy
     // vals = new double[d.size];
     // for (int i = 0; i < size; i++){

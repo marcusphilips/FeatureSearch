@@ -9,12 +9,14 @@ class Set {
     /// the different column(s) of data so to speak
     static std::vector<Datum> data;
     bool* isUsing;
+    /// @brief Size denotes the number of columns i.e. responding variables not the number of Datum elements in the 
+    /// data set
     int size;
     public:
 
     // constructor
 
-    Set(int size);
+    Set();
 
     // TODO: Rule of Three
 
@@ -24,8 +26,9 @@ class Set {
 
     // functions
 
+    void useColumn(int index);
     static void setData(std::vector<Datum>& data);
-    Datum& nearestNeighbor(const Datum& d);
+    int nearestNeighbor(const Datum& d) const;
     double kFoldAccurracy() const;
 };
 

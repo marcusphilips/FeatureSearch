@@ -1,11 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <string>
+#include <sstream>
 // these probably could've been in one header file honestly
 #include "set.hpp"
 #include "datum.hpp"
 
 using namespace std;
+
+double* nums;
 
 bool readfile(string filepath);
 
@@ -19,7 +23,10 @@ int main(int argc, char** argv){
         cout << "Error: Could not read file <" << argv[1] << "> for whatever reason" << endl;
         return 1;
     }
-
+    cout << "Successfully Read File" << endl;
+    Set s;
+    s.useColumn(0);
+    cout << s.kFoldAccurracy() << endl;
     return 0;
 }
 
@@ -31,33 +38,52 @@ bool readfile(string filepath){
         string line;
         while ( getline (input,line) )
         {
+            cout << line << endl;
             if (line.size() == 0) {
                 // if it somehow reads the ending new line as an entire line of size 0
                 // idk I'm paranoid
-                continue;
+                break;
             }
             // now I have to splice line
             unsigned i;
             vector<string> rawValues;
             while (true){
-                i = line.find(' ');
-                if (i == string::npos)
+                i = line.find(" ");
+               // cout << "i: " << i << endl;
+                if (i == (unsigned)-1)
                     break;
+                if (i == 0){
+                    line = line.substr(1);
+                    continue;
+                }
                 rawValues.push_back(line.substr(0, i));
+                //cout << rawValues.back() << endl;
                 line = line.substr(i+1); //skips the space
             }
-            rawValues.push_back(line);
+            // cout << "remaining line <" << line << ">" << endl;
+            rawValues.push_back(line + '\0');
+            cout << "Last value: " << rawValues.back() << endl;
             // convert rawValues to valid Datum Object
             // first value of rawValues is the class which I will convert to an integer
-            int classType = (int) stod(rawValues.at(0));
-            double* nums = new double[rawValues.size() - 1];
+            // for (int i = 0; i < rawValues.size(); i++){
+            //     cout << "<" << rawValues.at(i) << ">" << endl;
+            // }
+            int classType = stoi(rawValues.at(0).substr(0, 1));
+            nums = new double[rawValues.size() - 1];
             for (int i = 1; i < rawValues.size(); i++){
-                nums[i-1] = stod(rawValues.at(i));
+                string s = rawValues.at(i);
+                istringstream os(s);
+                double d;
+                os >> d;
+                //cout << s << " vs " << d << endl;
+                nums[i-1] = d;
             }
+            int debug;
             data.push_back(Datum(classType, nums, rawValues.size() - 1));
-
+           // cout << "Got Data: " << data.back().getType() << endl;
         }
         input.close();
+        Set::setData(data);
         return true;
     }
     else{
