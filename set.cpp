@@ -114,9 +114,6 @@ Set::Set(const Set& s){
 }
 
 Set& Set::operator=(const Set& rhs){
-    if (this == &rhs){
-        return *this;
-    }
     isUsing = new bool[rhs.size];
     for (int i = 0; i < rhs.size; i++){
         isUsing[i] = rhs.isUsing[i];

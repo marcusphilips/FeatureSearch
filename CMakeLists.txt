@@ -8,5 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ADD_EXECUTABLE(a
     datum.cpp
     set.cpp
+    featureSet.cpp
 	main.cpp
 )

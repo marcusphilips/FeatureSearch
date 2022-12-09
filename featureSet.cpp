@@ -16,3 +16,15 @@ int FeatureSet::getSize()const{
 std::vector<int> FeatureSet::getColumns() const{
     return columns;
 }
+
+std::string FeatureSet::toString() const{
+    std::string acc = "{";
+    for (int i = 0; i < columns.size(); i++){
+        acc += columns[i];
+        if (i + 1 != columns.size()){
+            acc += ", ";
+        }
+    }
+    acc += "}";
+    return acc;
+}
