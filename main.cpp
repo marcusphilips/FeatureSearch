@@ -56,6 +56,10 @@ int main(int argc, char **argv)
 
         bestFeatures.push_back(defaultRate);
 
+        // outputting data
+        cout << bestFeatures.back().accuracy << " " << bestFeatures.back().toString() << endl;
+
+
         // traverse the whole tree
         while (!columnsLeft.empty())
         {
@@ -63,9 +67,7 @@ int main(int argc, char **argv)
             /// If the latest element is the default Rate, then the bestSoFar selects no columns
             Set bestSoFar;
 
-            // outputting data
-            cout << bestFeatures.back().accuracy << " " << bestFeatures.back().toString() << endl;
-
+            
             // Populating bestSoFar with the columns found already
             vector<int> bestColumns = bestFeatures.back().getColumns();
             for (unsigned j = 0; j < bestColumns.size(); j++)
@@ -103,6 +105,10 @@ int main(int argc, char **argv)
 
             // remove the column that we added from our to-do list basically. Nice O(1) operation
             columnsLeft.erase(bestRateNumber);
+
+            // outputting data
+            cout << bestFeatures.back().accuracy << " " << bestFeatures.back().toString() << endl;
+
         }
     }
     else
