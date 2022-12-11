@@ -28,71 +28,138 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    /// @brief the bestFeatures stores the "history" of the tree traversal
-    vector<FeatureSet> bestFeatures;
+    int choice;
+    cout << "Enter 1 for Forward Selection or 2 for Backward Elimination" << endl;
+    cin >> choice;
 
-    /// @brief columnsLeft stores all the indices of the columns of data. Each level we traverse
-    /// the tree, columnsLeft goes down by 1
-    list<int> columnsLeft;
-
-    // Populating ColumnsLeft with the column indices 
-    for (int i = 0; i < Set::getNumColumns(); i++)
+    // forward selection
+    if (choice == 1)
     {
-        columnsLeft.push_back(i);
-    }
 
-    FeatureSet defaultRate;
+        /// @brief the bestFeatures stores the "history" of the tree traversal
+        vector<FeatureSet> bestFeatures;
 
-    // hardcoded defaultRate to be equivalent to guessing
-    defaultRate.accuracy = 0.5;
+        /// @brief columnsLeft stores all the indices of the columns of data. Each level we traverse
+        /// the tree, columnsLeft goes down by 1
+        list<int> columnsLeft;
 
-    bestFeatures.push_back(defaultRate);
-
-    // traverse the whole tree
-    while (!columnsLeft.empty())
-    {
-        /// @brief bestSoFar represents the set whose columns are selected from the latest element in bestFeatures.
-        /// If the latest element is the default Rate, then the bestSoFar selects no columns
-        Set bestSoFar;
-
-        // outputting data
-        cout << bestFeatures.back().accuracy << " " << bestFeatures.back().toString() << endl;
-
-        // Populating bestSoFar with the columns found already
-        vector<int> bestColumns = bestFeatures.back().getColumns();
-        for (unsigned j = 0; j < bestColumns.size(); j++){
-            bestSoFar.useColumn(bestColumns.at(j));
-        }
-
-        // find the best accuracy
-        double bestRate = -1.0;
-        list<int>::iterator bestRateNumber = columnsLeft.begin();
-        
-        for (list<int>::iterator it = columnsLeft.begin(); it != columnsLeft.end(); it++)
+        // Populating ColumnsLeft with the column indices
+        for (int i = 0; i < Set::getNumColumns(); i++)
         {
-            Set s = bestSoFar;
-
-            // Add one new column to bestSoFar
-            s.useColumn(*it);
-
-            // Calculate accuracy with that one new column
-            double accuracy = s.leaveOneOutAccurracy();
-
-            // capture the best acccuracy
-            if (accuracy > bestRate){
-                bestRate = accuracy;
-                bestRateNumber = it;
-            }
+            columnsLeft.push_back(i);
         }
 
-        // Create new feature set from what we learned and add to bestFeatures
-        FeatureSet f = bestFeatures.back();
-        f.addNewColumn(*bestRateNumber);
-        f.accuracy = bestRate;
-        bestFeatures.push_back(f);
-        
-        // remove the column that we added from our to-do list basically. Nice O(1) operation
-        columnsLeft.erase(bestRateNumber);
+        FeatureSet defaultRate;
+
+        // hardcoded defaultRate to be equivalent to guessing
+        defaultRate.accuracy = 0.5;
+
+        bestFeatures.push_back(defaultRate);
+
+        // traverse the whole tree
+        while (!columnsLeft.empty())
+        {
+            /// @brief bestSoFar represents the set whose columns are selected from the latest element in bestFeatures.
+            /// If the latest element is the default Rate, then the bestSoFar selects no columns
+            Set bestSoFar;
+
+            // outputting data
+            cout << bestFeatures.back().accuracy << " " << bestFeatures.back().toString() << endl;
+
+            // Populating bestSoFar with the columns found already
+            vector<int> bestColumns = bestFeatures.back().getColumns();
+            for (unsigned j = 0; j < bestColumns.size(); j++)
+            {
+                bestSoFar.useColumn(bestColumns.at(j));
+            }
+
+            // find the best accuracy
+            double bestRate = -1.0;
+            list<int>::iterator bestRateNumber = columnsLeft.begin();
+
+            for (list<int>::iterator it = columnsLeft.begin(); it != columnsLeft.end(); it++)
+            {
+                Set s = bestSoFar;
+
+                // Add one new column to bestSoFar
+                s.useColumn(*it);
+
+                // Calculate accuracy with that one new column
+                double accuracy = s.leaveOneOutAccurracy();
+
+                // capture the best acccuracy
+                if (accuracy > bestRate)
+                {
+                    bestRate = accuracy;
+                    bestRateNumber = it;
+                }
+            }
+
+            // Create new feature set from what we learned and add to bestFeatures
+            FeatureSet f = bestFeatures.back();
+            f.addNewColumn(*bestRateNumber);
+            f.accuracy = bestRate;
+            bestFeatures.push_back(f);
+
+            // remove the column that we added from our to-do list basically. Nice O(1) operation
+            columnsLeft.erase(bestRateNumber);
+        }
+    }
+    else
+    {
+        // backwards elimination
+        Set s;
+        FeatureSet traverser;
+        int left = Set::getNumColumns();
+        for (int i = 0; i < Set::getNumColumns(); i++){
+            traverser.addNewColumn(i);
+            s.useColumn(i);
+        }
+
+        traverser.accuracy = s.leaveOneOutAccurracy();
+        cout << traverser.accuracy << " " << traverser.toString() << endl;
+
+        while (left > 0){
+
+            vector<int> cols = traverser.getColumns();
+            
+            double bestRate = -1.0;
+            unsigned bestIndex = 0;
+            for (unsigned i = 0; i < cols.size(); i++){
+                s = Set();
+                
+                for (unsigned j = 0; j < cols.size(); j++){
+                    // remove one column
+                    if (i == j)
+                        continue;
+                    s.useColumn(cols.at(j));
+                }
+                double acccuracy = s.leaveOneOutAccurracy();
+
+                if (acccuracy > bestRate){
+                    bestIndex = i;    
+                    bestRate = acccuracy; 
+                }     
+            }
+            // update traverser
+            FeatureSet next;
+            for (unsigned i = 0; i < cols.size(); i++){
+                if (bestIndex == i)
+                    continue;
+                next.addNewColumn(i);
+            }
+
+            // now traverser has one less feature
+            traverser = next;
+            if (traverser.getSize() != 0)
+                traverser.accuracy = bestRate;
+            else
+                traverser.accuracy = 0.5;
+            cout << traverser.accuracy << " " << traverser.toString() << endl;
+            left--;
+
+            
+        }
     }
     return 0;
 }
@@ -124,7 +191,7 @@ bool readfile(string filepath)
                 i = line.find(" ");
                 if (i == (unsigned)-1)
                     break;
-                if (i == 0) 
+                if (i == 0)
                 {
                     // the space character is the next character so just move over
                     line = line.substr(1);
@@ -135,7 +202,7 @@ bool readfile(string filepath)
             }
             rawValues.push_back(line + '\0');
             int classType = stoi(rawValues.at(0).substr(0, 1));
-            double* nums = new double[rawValues.size() - 1];
+            double *nums = new double[rawValues.size() - 1];
             for (unsigned i = 1; i < rawValues.size(); i++)
             {
                 string s = rawValues.at(i);
